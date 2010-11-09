@@ -1,7 +1,7 @@
 #lang racket
 
 ;
-;  This is an early alpha version, don't use,
+;  This is an early alpha version; don't use it,
 ;  because I don't know what I am doing!
 ;
 
@@ -16,12 +16,12 @@
 
 ; Maker
 
-(define-cstruct _cdb-make ([cdb_fd    _int]
-                           [cdb_dpos  _uint]
-                           [cdb_rcnt  _uint]
-                           [cdb_buf   _bytes] ; allocate [4096]
-                           [cdb_bpos  _pointer]
-                           [cdb_rec   _bytes] ; allocate [256]
+(define-cstruct _cdb-make ([fd    _int]
+                           [dpos  _uint]
+                           [rcnt  _uint]
+                           [buf   _bytes] ; allocate [4096]
+                           [bpos  _pointer]
+                           [rec   _bytes] ; allocate [256]
                            ))
 
 (define cdb-make-start
@@ -52,14 +52,14 @@
 
 ; Reader
 
-(define-cstruct _cdb ([cdb_fd    _int]
-                      [cdb_fsize _uint]
-                      [cdb_dend  _uint]
-                      [cdb_mem   _pointer]
-                      [cdb_vpos  _uint]
-                      [cdb_vlen  _uint]
-                      [cdb_kpos  _uint]
-                      [cdb_klen  _uint]))
+(define-cstruct _cdb ([fd    _int]
+                      [fsize _uint]
+                      [dend  _uint]
+                      [mem   _pointer]
+                      [vpos  _uint]
+                      [vlen  _uint]
+                      [kpos  _uint]
+                      [klen  _uint]))
 
 (define new-cdb
   (make-cdb 0 0 0 #f 0 0 0 0))
@@ -85,10 +85,10 @@
                (_fun _cdb-pointer _bytes _uint _uint -> _bool)))
 
 (define (cdb-datalen c)
-  (cdb-cdb_vlen c))
+  (cdb-vlen c))
 
 (define (cdb-datapos c)
-  (cdb-cdb_vpos c))
+  (cdb-vpos c))
 
 (define (cdb-read-easy cdb)
   (let* ([vpos (cdb-datapos cdb)]
