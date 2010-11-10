@@ -136,20 +136,29 @@
 
 ; Better functions
 
-(define (call-with-cdb-reader file proc)
-  (call-with-continuation-barrier
-   (lambda ()
-     (let* ([port (open-input-file file)]
-            [cdb (cdb-init port)])
-       (dynamic-wind
-        void
-        (lambda ()
-          (proc cdb))
-        (lambda ()
-          (close-input-port port)))))))
+(define (with-cdb-reader file proc)
+  (let* ([port (open-input-file file)]
+         [cdb (cdb-init port)])
+    (proc cdb)
+    (close-input-port port)))
+
+(define (with-cdb-maker file proc)
+  (let* ([port (open-output-file file #:exists 'replace)]
+         [cdb (cdb-make-start port)])
+    (proc cdb)
+    (cdb-make-finish cdb)
+    (close-output-port port)))
+
 
 ; Example:
 ;
-;(call-with-cdb-reader "/Users/dmitry/Desktop/test.txt"
-;                        (lambda (cdb)
-;                          (cdb-get-value cdb "Hello")))
+;(with-cdb-reader "/Users/dmitry/Desktop/data.cdb"
+;                 (lambda (cdb)
+;                     (print (cdb-get-values cdb "First"))))
+
+;(with-cdb-maker "/Users/dmitry/Desktop/data.cdb"
+;                  (lambda (cdb)
+;                    (cdb-make-add cdb "First" "Uno")
+;                    (cdb-make-add cdb "First" "One")
+;                    (cdb-make-add cdb "First" "Один")
+;                    (cdb-make-add cdb "Second" "Two")))
