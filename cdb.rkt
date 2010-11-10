@@ -150,6 +150,8 @@
     (close-output-port port)))
 
 
+(provide (all-defined-out))
+
 ; Example:
 ;
 ;(with-cdb-reader "/Users/dmitry/Desktop/data.cdb"
